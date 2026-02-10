@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-function UploadForm() {
+function UploadForm({ onUploadSuccess }) {
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
 
@@ -28,9 +28,8 @@ function UploadForm() {
       if (!response.ok) {
         throw new Error("Upload failed");
       }
-
-      setMessage("Upload successful");
-      setFile(null);
+        setMessage("Upload successful");
+        onUploadSuccess();
     } catch (error) {
       setMessage("Error uploading file");
     }

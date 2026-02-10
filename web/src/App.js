@@ -7,6 +7,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(
     !!localStorage.getItem("authToken")
   );
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleLogout = () => {
     localStorage.removeItem("authToken");
@@ -21,9 +22,10 @@ function App() {
     <div style={{ padding: "20px" }}>
       <h1>Chemical Equipment Visualizer</h1>
       <button onClick={handleLogout}>Logout</button>
-      <UploadForm />
+
+      <UploadForm onUploadSuccess={() => setRefreshKey(prev => prev + 1)} />
       <hr />
-      <DatasetList />
+      <DatasetList refreshKey={refreshKey} />
     </div>
   );
 }

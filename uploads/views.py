@@ -13,6 +13,11 @@ from rest_framework.generics import ListAPIView
 from .models import EquipmentDataset
 from .serializers import EquipmentDatasetSerializer
 
+import os
+from django.conf import settings
+from django.http import FileResponse, Http404
+from rest_framework.permissions import IsAuthenticated
+
 from .pdf_utils import generate_pdf_report
 from django.http import FileResponse
 
@@ -101,9 +106,23 @@ class LoginAPIView(APIView):
         return Response({"token": token.key})
 
 class DatasetPDFAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def get(self, request, pk):
-        dataset = EquipmentDataset.objects.get(pk=pk)
+        try:
+            dataset = EquipmentDataset.objects.get(pk=pk)
+        except EquipmentDataset.DoesNotExist:
+            raise Http404
+
         pdf_name = generate_pdf_report(dataset)
         file_path = os.path.join(settings.MEDIA_ROOT, pdf_name)
 
-        return FileResponse(open(file_path, "rb"), content_type="application/pdf")
+        if not os.path.exists(file_path):
+            raise Http404
+
+        response = FileResponse(
+            open(file_path, "rb"),
+            content_type="application/pdf",
+        )
+        response["Content-Disposition"] = f'attachment; filename="{pdf_name}"'
+        return response

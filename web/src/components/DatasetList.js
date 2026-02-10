@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import TypeDistributionChart from "../charts/TypeDistributionChart";
 import AveragesChart from "../charts/AveragesChart";
 
-function DatasetList() {
+function DatasetList({refreshKey}) {
   const [datasets, setDatasets] = useState([]);
 
   useEffect(() => {
@@ -15,7 +15,7 @@ function DatasetList() {
   })
     .then((res) => res.json())
     .then((data) => setDatasets(data));
-}, []);
+}, [refreshKey]);
 const downloadPDF = async (datasetId) => {
   const token = localStorage.getItem("authToken");
 
