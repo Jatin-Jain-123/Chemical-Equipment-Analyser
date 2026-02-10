@@ -234,18 +234,3 @@ This project demonstrates:
 
 * SQLite is used for simplicity and demo purposes
 * Backend automatically deletes oldest datasets beyond 5
-* Project emphasizes clarity, correctness, and real-world patterns
-
----
-
-## 👤 Author
-
-Built as an **Intern Screening Task project** to demonstrate practical full‑stack development skills.
-
----
-
-## ✅ Status
-
-✔ Complete
-✔ Fully functional
-✔ Ready for submission
