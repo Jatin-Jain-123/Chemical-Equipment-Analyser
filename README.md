@@ -6,8 +6,9 @@ Hybrid Web + Desktop Application for CSV-based data analytics and visualization
 ## Installation and Run
 
 1. download/ clone this repository
-2. make sure that Python and pip, Node and npm are installed on your machine
-3. open a terminal, navigate to this repository location and run this command: pip install -r requirements.txt
+(make sure that Python and pip, Node and npm are installed on your machine)
+2. open a terminal, navigate to this repository location and run this command: pip install -r requirements.txt
+3. create a superuser to log into the system, use the command: python create superuser (this will prompt you to choose a username and assign a password to it)
 4. navigate to web folder, using: cd web
 5. run this command: npm install
 6. navigate back to the repository root location, using: cd ..
