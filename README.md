@@ -15,8 +15,8 @@ Hybrid Web + Desktop Application for CSV-based data analytics and visualization
 7. to run the server locally, run these commands: 
     python manage.py migrate
     python manage.py runserver
-8. to run the webpage, navigate to the web folder: cd web and run: npm run start (On Windows - run this command in a CMD instance, Powershell may block script execution)
-9. to open a desktop app window, navigate to the desktop folder and run: python main.py
+8. to run the webpage - create a new terminal instance -> navigate to the web folder(cd web) and run: npm run start (On Windows - run this command in a CMD instance, Powershell may block script execution)
+9. to open a desktop app window - create a new terminal instance -> navigate to the desktop folder(cd desktop) and run: python main.py
 10. this will create both web and desktop based interfaces for the you to interact with
 
 ## 📌 Project Overview
@@ -26,20 +26,18 @@ The **Chemical Equipment Analyser** is a hybrid application that runs as both:
 * a **Web Application (React + Chart.js)**, and
 * a **Desktop Application (PyQt5 + Matplotlib)**,
 
-powered by a **shared Django REST backend**.
+powered by a **shared Django backend**.
 
-The application allows authenticated users to upload CSV files containing chemical equipment data, performs analytics using Pandas, stores recent datasets, visualizes results, and generates downloadable PDF reports.
-
-This project was built as part of an **Intern Screening Task** to demonstrate full‑stack development, API design, data processing, and UI consistency across platforms.
+The application allows authenticated users to upload CSV files containing chemical equipment data, performs analytics using Pandas, stores 5 recent datasets, visualizes results, and generates downloadable PDF reports.
 
 ---
 
-## 🧱 Architecture
+## Architecture
 
 ```
 React (Web) ─────┐
                  │
-PyQt (Desktop) ──┼──▶ Django REST API ──▶ SQLite
+PyQt (Desktop) ──┼──▶ Django API ──▶ SQLite
                  │           │
                  │           ├── Pandas (CSV analytics)
                  │           └── ReportLab (PDF generation)
@@ -108,56 +106,6 @@ project-root/
 └── README.md
 ```
 
----
-
-## 🚀 Setup Instructions
-
-### 1️⃣ Backend Setup (Django)
-
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py runserver
-```
-
-Backend runs at:
-
-```
-http://127.0.0.1:8000/
-```
-
----
-
-### 2️⃣ Web Frontend Setup (React)
-
-```bash
-cd web
-npm install
-npm start
-```
-
-Web app runs at:
-
-```
-http://localhost:3000/
-```
-
----
-
-### 3️⃣ Desktop App Setup (PyQt)
-
-```bash
-cd desktop
-pip install PyQt5 requests matplotlib
-python main.py
-```
-
----
-
 ## 🔐 Authentication Flow
 
 1. User logs in via Web or Desktop UI
@@ -216,35 +164,3 @@ PDFs can be downloaded from:
 | POST   | `/api/upload/`            | Upload CSV           |
 | GET    | `/api/datasets/`          | List last 5 datasets |
 | GET    | `/api/datasets/<id>/pdf/` | Download PDF report  |
-
----
-
-## 🎥 Demo
-
-A short demo video (2–3 minutes) shows:
-
-* login
-* CSV upload
-* charts
-* PDF download
-* web + desktop usage
-
----
-
-## 🧠 Learning Outcomes
-
-This project demonstrates:
-
-* full‑stack architecture
-* REST API design
-* frontend–backend integration
-* data analytics with Pandas
-* secure token-based authentication
-* cross-platform UI development
-
----
-
-## 📌 Notes
-
-* SQLite is used for simplicity and demo purposes
-* Backend automatically deletes oldest datasets beyond 5
