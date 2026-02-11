@@ -3,23 +3,26 @@
 Hybrid Web + Desktop Application for CSV-based data analytics and visualization
 
 ---
+
 ## Installation and Run
 
 1. download/ clone this repository
 (make sure that Python and pip, Node and npm are installed on your machine)
-2. open a terminal, navigate to this repository location and run this command: pip install -r requirements.txt
-3. create a superuser to log into the system, use the command: python create superuser (this will prompt you to choose a username and assign a password to it)
-4. navigate to web folder, using: cd web
-5. run this command: npm install
-6. navigate back to the repository root location, using: cd ..
+2. open a terminal, navigate to this repository location and run this command: `pip install -r requirements.txt`
+3. create a superuser to log into the system, use the command: `python create superuser` (this will prompt you to choose a username and assign a password to it)
+4. navigate to web folder, using: `cd web`
+5. run this command: `npm install`
+6. navigate back to the repository root location, using: `cd ..`
 7. to run the server locally, run these commands: 
-    python manage.py migrate
-    python manage.py runserver
-8. to run the webpage - create a new terminal instance -> navigate to the web folder(cd web) and run: npm run start (On Windows - run this command in a CMD instance, Powershell may block script execution)
-9. to open a desktop app window - create a new terminal instance -> navigate to the desktop folder(cd desktop) and run: python main.py
+    `python manage.py migrate`
+    `python manage.py runserver`
+8. to run the webpage - create a new terminal instance -> navigate to the web folder(`cd web`) and run: `npm run start` (On Windows - run this command in a CMD instance, Powershell may block script execution)
+9. to open a desktop app window - create a new terminal instance -> navigate to the desktop folder(cd desktop) and run: `python main.py`
 10. this will create both web and desktop based interfaces for the you to interact with
 
-## 📌 Project Overview
+---
+
+## Project Overview
 
 The **Chemical Equipment Analyser** is a hybrid application that runs as both:
 
@@ -51,7 +54,7 @@ PyQt (Desktop) ──┼──▶ Django API ──▶ SQLite
 
 ---
 
-## ⚙️ Tech Stack
+## Tech Stack
 
 | Layer            | Technology                    |
 | ---------------- | ----------------------------- |
@@ -66,7 +69,7 @@ PyQt (Desktop) ──┼──▶ Django API ──▶ SQLite
 
 ---
 
-## ✨ Features
+## Features
 
 ### Core Features
 
@@ -92,7 +95,7 @@ PyQt (Desktop) ──┼──▶ Django API ──▶ SQLite
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 project-root/
@@ -105,8 +108,9 @@ project-root/
 ├── desktop/              # PyQt desktop app
 └── README.md
 ```
+---
 
-## 🔐 Authentication Flow
+## Authentication Flow
 
 1. User logs in via Web or Desktop UI
 2. Django returns an auth token
@@ -124,7 +128,7 @@ Authorization: Token <token>
 
 ---
 
-## 📊 CSV Format
+## CSV Format
 
 Required CSV headers:
 
@@ -140,7 +144,7 @@ Pump A,Pump,12.5,4.2,90
 
 ---
 
-## 📄 PDF Reports
+## PDF Reports
 
 Each dataset can generate a PDF containing:
 
@@ -156,7 +160,7 @@ PDFs can be downloaded from:
 
 ---
 
-## 🧪 API Endpoints
+## API Endpoints
 
 | Method | Endpoint                  | Description          |
 | ------ | ------------------------- | -------------------- |
