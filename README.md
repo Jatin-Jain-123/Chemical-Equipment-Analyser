@@ -1,13 +1,27 @@
 # Chemical-Equipment-Analyser
-# Chemical Equipment Parameter Visualizer
 
 Hybrid Web + Desktop Application for CSV-based data analytics and visualization
 
 ---
+## Installation and Run
+
+1. download/ clone this repository
+2. open a terminal, navigate to this repository
+3. make sure that Python and pip, Node and npm are installed on your machine
+4. run this command: pip install -r requirements.txt
+5. navigate to web folder, using: cd web
+6. run this command: npm install
+7. navigate back to the repository root location, using: cd ..
+8. to run the server locally, run these commands: 
+    python manage.py migrate
+    python manage.py runserver
+9. to run the webpage, navigate to the web folder: cd web and run: npm run start (On Windows - run this command in a CMD instance, Powershell may block script execution)
+10. to open a desktop app window, navigate to the desktop folder and run: python main.py
+11. this will create both web and desktop based interfaces for the you to interact with
 
 ## 📌 Project Overview
 
-The **Chemical Equipment Parameter Visualizer** is a hybrid application that runs as both:
+The **Chemical Equipment Analyser** is a hybrid application that runs as both:
 
 * a **Web Application (React + Chart.js)**, and
 * a **Desktop Application (PyQt5 + Matplotlib)**,

@@ -1,0 +1,20 @@
+Equipment Name,Type,Flowrate,Pressure,Temperature
+Pump-1,Pump,113.6,5.78,105.0
+Condenser-1,Condenser,151.4,7.5,119.3
+Compressor-1,Compressor,89.9,9.33,90.3
+Reactor-2,Reactor,137.9,8.00,131.7
+Condenser-2,Condenser,156.2,7.67,122.2
+Valve-2,Valve,54.90,4.44,97.3
+Pump-4,Pump,123.0,6.55,113.6
+Pump-2,Pump,124.9,6.22,112.6
+Compressor-1,Compressor,89.9,9.33,90.
+Pump-1,Pump,113.6,5.78,105.0
+HeatExchanger-1,HeatExchanger,142.0,6.89,124.1
+Pump-4,Pump,123.0,6.55,113.6
+Valve-1,Valve,56.8,4.55,100.2
+Reactor-2,Reactor,137.2,8.00,131.7
+HeatExchanger-1,HeatExchanger,142.0,6.89,124.1
+Pump-2,Pump,124.9,6.22,112.6
+Condenser-2,Condenser,156.2,7.67,122.2
+Valve-3,Valve,58.6,4.66,102.1
+HeatExchanger-1,HeatExchanger,142.0,6.89,124.1
