@@ -1,6 +1,10 @@
-# Chemical-Equipment-Analyser
+# Chemical Equipment Analyser
 
-Hybrid Web + Desktop Application for CSV-based data analytics and visualization
+Upload a CSV of chemical process equipment (pumps, valves, reactors, heat exchangers) and get
+average flowrate, pressure and temperature, a breakdown by equipment type, and a downloadable
+PDF report. Runs as a web app (React) and a desktop app (PyQt) on one Django backend.
+
+**Website and live demo:** https://jatin-jain-123.github.io/Chemical-Equipment-Analyser/
 
 ---
 

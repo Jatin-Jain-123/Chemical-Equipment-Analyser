@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chemical Equipment Analyser: CSV analytics and PDF reports</title>
+<meta name="description" content="Chemical Equipment Analyser turns a CSV of pumps, valves, reactors and heat exchangers into averages, type charts and a PDF report, on the web or the desktop. Free and open source.">
+<link rel="canonical" href="https://jatin-jain-123.github.io/Chemical-Equipment-Analyser/">
+<meta property="og:title" content="Chemical Equipment Analyser">
+<meta property="og:description" content="Upload an equipment CSV, get averages, a type chart and a PDF report. Web and desktop, one Django backend.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jatin-jain-123.github.io/Chemical-Equipment-Analyser/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230f766e'/%3E%3Cpath d='M9 23V14M16 23V9M23 23v-6' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Chemical Equipment Analyser",
+  "alternateName": "Chemical Equipment Analyzer",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Windows, macOS, Linux, Web",
+  "description": "Upload a CSV of chemical process equipment and get averages, a type distribution chart and a downloadable PDF report.",
+  "url": "https://jatin-jain-123.github.io/Chemical-Equipment-Analyser/",
+  "codeRepository": "https://github.com/Jatin-Jain-123/Chemical-Equipment-Analyser",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+<style>
+  :root {
+    --bg: #f7f8f7; --surface: #ffffff; --text: #16201e; --muted: #5a6764;
+    --line: #dfe4e2; --accent: #0f766e; --accent-soft: #e3f2ef; --error: #b42318;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0f1413; --surface: #171e1c; --text: #e8eeec; --muted: #9aa8a4;
+      --line: #2a3431; --accent: #3fb8a8; --accent-soft: #16302c; --error: #f97066;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 16px; }
+  header { padding: 20px 0; border-bottom: 1px solid var(--line); }
+  header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .brand { font-weight: 700; color: var(--text); text-decoration: none; }
+  nav a { color: var(--muted); text-decoration: none; margin-left: 18px; font-size: 15px; }
+  nav a:hover { color: var(--accent); }
+  .hero { padding: 64px 0 40px; }
+  h1 { font-size: clamp(30px, 5vw, 46px); line-height: 1.15; margin: 0 0 16px; letter-spacing: -0.02em; }
+  .lede { font-size: 19px; color: var(--muted); max-width: 640px; margin: 0 0 28px; }
+  .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-block; padding: 11px 18px; border-radius: 8px; font-weight: 600;
+    text-decoration: none; border: 1px solid var(--accent); cursor: pointer; font-size: 15px;
+  }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.ghost { color: var(--accent); background: transparent; }
+  section { padding: 40px 0; border-top: 1px solid var(--line); }
+  h2 { font-size: 26px; margin: 0 0 8px; letter-spacing: -0.01em; }
+  .sub { color: var(--muted); margin: 0 0 24px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; }
+  .card h3 { margin: 0 0 6px; font-size: 17px; }
+  .card p { margin: 0; color: var(--muted); font-size: 15px; }
+  .demo { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+  .demo-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 16px; }
+  .demo-actions input[type=file] { font-size: 14px; color: var(--muted); max-width: 100%; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin: 8px 0 20px; }
+  .stat { background: var(--accent-soft); border-radius: 8px; padding: 12px 14px; }
+  .stat b { display: block; font-size: 24px; }
+  .stat span { color: var(--muted); font-size: 14px; }
+  .bar-row { display: grid; grid-template-columns: 130px 1fr 32px; gap: 10px; align-items: center; margin: 6px 0; font-size: 14px; }
+  .bar { height: 14px; background: var(--accent); border-radius: 4px; }
+  .msg { font-size: 14px; color: var(--muted); }
+  .msg.err { color: var(--error); }
+  pre, code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 14px; }
+  pre { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px; overflow-x: auto; }
+  .arch { white-space: pre; }
+  ol { padding-left: 20px; } ol li { margin: 6px 0; }
+  footer { padding: 28px 0 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+  footer a { color: var(--muted); }
+  @media (max-width: 560px) {
+    nav a:not(:last-child) { display: none; }
+    .bar-row { grid-template-columns: 100px 1fr 28px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <a class="brand" href="./">Chemical Equipment Analyser</a>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#try">Try it</a>
+      <a href="#install">Install</a>
+      <a href="https://github.com/Jatin-Jain-123/Chemical-Equipment-Analyser">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap hero">
+    <h1>Chemical Equipment Analyser</h1>
+    <p class="lede">Drop in a CSV of your pumps, valves, reactors and heat exchangers. Get average
+      flowrate, pressure and temperature, a breakdown by equipment type, and a PDF report you can
+      share. Use it in the browser or as a desktop app. Free and open source.</p>
+    <div class="cta">
+      <a class="btn primary" href="#try">Try it with sample data</a>
+      <a class="btn ghost" href="https://github.com/Jatin-Jain-123/Chemical-Equipment-Analyser">View the code</a>
+    </div>
+  </div>
+
+  <section id="features">
+    <div class="wrap">
+      <h2>What it does</h2>
+      <p class="sub">One Django backend, two front ends: React in the browser and PyQt on the desktop.</p>
+      <div class="grid">
+        <div class="card"><h3>CSV upload</h3><p>Upload equipment data from the web or the desktop app. Files missing a required column are rejected with a clear message.</p></div>
+        <div class="card"><h3>Instant analytics</h3><p>Total equipment count, average flowrate, pressure and temperature, and how many of each equipment type, computed with Pandas.</p></div>
+        <div class="card"><h3>Charts</h3><p>Averages and type distribution charts: Chart.js on the web, Matplotlib on the desktop.</p></div>
+        <div class="card"><h3>PDF reports</h3><p>Download a one-page report for any dataset, generated with ReportLab.</p></div>
+        <div class="card"><h3>Recent history</h3><p>The last five uploads stay available, so you can compare today's readings with last week's.</p></div>
+        <div class="card"><h3>Sign-in</h3><p>Token-based authentication protects uploads, datasets and reports.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="try">
+    <div class="wrap">
+      <h2>Try it in your browser</h2>
+      <p class="sub">This demo runs the same analysis as the backend, entirely on this page. Your file never leaves your computer.</p>
+      <div class="demo">
+        <div class="demo-actions">
+          <button class="btn primary" id="sample" type="button">Load sample data</button>
+          <input type="file" id="file" accept=".csv,text/csv" aria-label="Choose a CSV file">
+        </div>
+        <p class="msg" id="msg">Load the sample, or choose a CSV with the columns shown below.</p>
+        <div id="out" hidden>
+          <div class="stats">
+            <div class="stat"><b id="s-count">0</b><span>Equipment</span></div>
+            <div class="stat"><b id="s-flow">0</b><span>Avg flowrate</span></div>
+            <div class="stat"><b id="s-press">0</b><span>Avg pressure</span></div>
+            <div class="stat"><b id="s-temp">0</b><span>Avg temperature</span></div>
+          </div>
+          <h3 style="margin:0 0 8px;font-size:16px">Equipment by type</h3>
+          <div id="bars"></div>
+        </div>
+      </div>
+      <p class="sub" style="margin-top:20px">Required CSV header:</p>
+      <pre>Equipment Name,Type,Flowrate,Pressure,Temperature
+Pump A,Pump,12.5,4.2,90</pre>
+    </div>
+  </section>
+
+  <section id="install">
+    <div class="wrap">
+      <h2>Run it yourself</h2>
+      <p class="sub">You need Python with pip, and Node with npm.</p>
+      <ol>
+        <li>Clone the repository and install the backend: <code>pip install -r requirements.txt</code></li>
+        <li>Create a user: <code>python manage.py createsuperuser</code></li>
+        <li>Start the API: <code>python manage.py migrate</code> then <code>python manage.py runserver</code></li>
+        <li>Web app: <code>cd web</code>, <code>npm install</code>, <code>npm run start</code></li>
+        <li>Desktop app: <code>cd desktop</code>, <code>python main.py</code></li>
+      </ol>
+      <pre class="arch">React (web) ─────┐
+                 ├──▶ Django REST API ──▶ SQLite
+PyQt (desktop) ──┘          ├── Pandas (analytics)
+                            └── ReportLab (PDF reports)</pre>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    Chemical Equipment Analyser (sometimes spelled Analyzer) is built by
+    <a href="https://github.com/Jatin-Jain-123">Jatin Jain</a>.
+    Source on <a href="https://github.com/Jatin-Jain-123/Chemical-Equipment-Analyser">GitHub</a>.
+  </div>
+</footer>
+
+<script>
+  const SAMPLE = `Equipment Name,Type,Flowrate,Pressure,Temperature
+Pump-1,Pump,120,5.2,110
+Compressor-1,Compressor,95,8.4,95
+Valve-1,Valve,60,4.1,105
+HeatExchanger-1,HeatExchanger,150,6.2,130
+Pump-2,Pump,132,5.6,118
+Valve-2,Valve,58,4.0,102
+Reactor-1,Reactor,140,7.5,140
+Pump-3,Pump,125,5.3,115
+Condenser-1,Condenser,160,6.8,125
+Compressor-2,Compressor,100,8.0,98
+HeatExchanger-2,HeatExchanger,155,6.3,132
+Valve-3,Valve,62,4.2,107
+Pump-4,Pump,130,5.9,119
+Reactor-2,Reactor,145,7.2,138
+Condenser-2,Condenser,165,6.9,128`;
+  const REQUIRED = ["Equipment Name", "Type", "Flowrate", "Pressure", "Temperature"];
+  const $ = (id) => document.getElementById(id);
+
+  function parseLine(line) {
+    const cells = []; let cur = ""; let quoted = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (quoted) {
+        if (ch === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+        else if (ch === '"') quoted = false;
+        else cur += ch;
+      } else if (ch === '"') quoted = true;
+      else if (ch === ",") { cells.push(cur.trim()); cur = ""; }
+      else cur += ch;
+    }
+    cells.push(cur.trim());
+    return cells;
+  }
+
+  function analyse(text) {
+    const lines = text.replace(/^﻿/, "").split(/\r?\n/).filter((l) => l.trim());
+    if (lines.length < 2) throw new Error("The file has no data rows.");
+    const header = parseLine(lines[0]);
+    const missing = REQUIRED.filter((c) => !header.includes(c));
+    if (missing.length) throw new Error("CSV missing required columns: " + missing.join(", "));
+    const idx = Object.fromEntries(REQUIRED.map((c) => [c, header.indexOf(c)]));
+    const sums = { Flowrate: [0, 0], Pressure: [0, 0], Temperature: [0, 0] };
+    const types = {};
+    const rows = lines.slice(1).map(parseLine);
+    for (const row of rows) {
+      const type = row[idx.Type] || "(blank)";
+      types[type] = (types[type] || 0) + 1;
+      for (const col of Object.keys(sums)) {
+        const v = parseFloat(row[idx[col]]);
+        if (Number.isFinite(v)) { sums[col][0] += v; sums[col][1]++; }
+      }
+    }
+    const avg = (col) => (sums[col][1] ? sums[col][0] / sums[col][1] : NaN);
+    return { total: rows.length, flow: avg("Flowrate"), press: avg("Pressure"), temp: avg("Temperature"), types };
+  }
+
+  function show(text) {
+    try {
+      const r = analyse(text);
+      const fmt = (v) => (Number.isFinite(v) ? v.toFixed(2) : "n/a");
+      $("s-count").textContent = r.total;
+      $("s-flow").textContent = fmt(r.flow);
+      $("s-press").textContent = fmt(r.press);
+      $("s-temp").textContent = fmt(r.temp);
+      const entries = Object.entries(r.types).sort((a, b) => b[1] - a[1]);
+      const max = Math.max(...entries.map((e) => e[1]));
+      const bars = $("bars"); bars.textContent = "";
+      for (const [name, count] of entries) {
+        const row = document.createElement("div"); row.className = "bar-row";
+        const label = document.createElement("span"); label.textContent = name;
+        const track = document.createElement("div");
+        const bar = document.createElement("div"); bar.className = "bar";
+        bar.style.width = (100 * count / max) + "%"; track.appendChild(bar);
+        const num = document.createElement("span"); num.textContent = count;
+        row.append(label, track, num); bars.appendChild(row);
+      }
+      $("out").hidden = false;
+      $("msg").className = "msg";
+      $("msg").textContent = "Analysed " + r.total + " rows.";
+    } catch (e) {
+      $("out").hidden = true;
+      $("msg").className = "msg err";
+      $("msg").textContent = e.message;
+    }
+  }
+
+  $("sample").addEventListener("click", () => show(SAMPLE));
+  $("file").addEventListener("change", (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    if (f.size > 5 * 1024 * 1024) { show(""); $("msg").textContent = "Please choose a file under 5 MB."; return; }
+    f.text().then(show);
+  });
+</script>
+</body>
+</html>
