@@ -18,7 +18,7 @@ class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Chemical Equipment Visualizer (Desktop)")
+        self.setWindowTitle("Chemical Equipment Analyser (Desktop)")
         self.setGeometry(100, 100, 800, 600)
 
         layout = QVBoxLayout()
@@ -71,10 +71,14 @@ class MainWindow(QWidget):
 
         url = "http://127.0.0.1:8000/api/upload/"
 
-        with open(file_path, "rb") as f:
-            files = {"file": f}
-            headers = {"Authorization": f"Token {self.token}"}
-            response = requests.post(url, files=files, headers=headers)
+        try:
+            with open(file_path, "rb") as f:
+                files = {"file": f}
+                headers = {"Authorization": f"Token {self.token}"}
+                response = requests.post(url, files=files, headers=headers, timeout=30)
+        except requests.RequestException:
+            self.server_unreachable()
+            return
 
         if response.status_code == 201:
             self.status_label.setText("Upload successful")
@@ -84,7 +88,11 @@ class MainWindow(QWidget):
                 self.latest_dataset_id = latest["id"]
                 self.refresh_datasets()
         else:
-            self.status_label.setText("Upload failed")
+            try:
+                error = response.json().get("error", "Upload failed")
+            except ValueError:
+                error = "Upload failed"
+            self.status_label.setText(error)
 
     def login(self):
         username = self.username_input.text()
@@ -94,10 +102,15 @@ class MainWindow(QWidget):
             QMessageBox.warning(self, "Error", "Enter credentials")
             return
 
-        response = requests.post(
-            "http://127.0.0.1:8000/api/login/",
-            json={"username": username, "password": password},
-        )
+        try:
+            response = requests.post(
+                "http://127.0.0.1:8000/api/login/",
+                json={"username": username, "password": password},
+                timeout=10,
+            )
+        except requests.RequestException:
+            self.server_unreachable()
+            return
 
         if response.status_code == 200:
             self.token = response.json()["token"]
@@ -137,10 +150,23 @@ class MainWindow(QWidget):
 
         self.layout().addWidget(canvas)
 
+    def server_unreachable(self):
+        self.status_label.setText("Cannot reach the server")
+        QMessageBox.critical(
+            self,
+            "Server not running",
+            "Cannot reach the backend at http://127.0.0.1:8000.\n"
+            "Start it with: python manage.py runserver",
+        )
+
     def fetch_datasets(self):
         url = "http://127.0.0.1:8000/api/datasets/"
         headers = {"Authorization": f"Token {self.token}"}
-        response = requests.get(url, headers=headers)
+        try:
+            response = requests.get(url, headers=headers, timeout=10)
+        except requests.RequestException:
+            self.server_unreachable()
+            return []
         if response.status_code == 200:
             return response.json()
         return []
@@ -158,7 +184,11 @@ class MainWindow(QWidget):
         url = f"http://127.0.0.1:8000/api/datasets/{dataset_id}/pdf/"
         headers = {"Authorization": f"Token {self.token}"}
 
-        response = requests.get(url, headers=headers, stream=True)
+        try:
+            response = requests.get(url, headers=headers, stream=True, timeout=30)
+        except requests.RequestException:
+            self.server_unreachable()
+            return
 
         if response.status_code == 200:
             file_path, _ = QFileDialog.getSaveFileName(

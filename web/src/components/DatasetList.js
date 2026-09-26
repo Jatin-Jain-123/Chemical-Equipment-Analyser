@@ -2,20 +2,34 @@ import React, { useEffect, useState } from "react";
 import TypeDistributionChart from "../charts/TypeDistributionChart";
 import AveragesChart from "../charts/AveragesChart";
 
-function DatasetList({refreshKey}) {
+function DatasetList({ refreshKey, onAuthError }) {
   const [datasets, setDatasets] = useState([]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-  const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("authToken");
 
-  fetch("http://127.0.0.1:8000/api/datasets/", {
-    headers: {
-      Authorization: `Token ${token}`,
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => setDatasets(data));
-}, [refreshKey]);
+    fetch("http://127.0.0.1:8000/api/datasets/", {
+      headers: {
+        Authorization: `Token ${token}`,
+      },
+    })
+      .then((res) => {
+        if (res.status === 401) {
+          onAuthError();
+          return [];
+        }
+        if (!res.ok) {
+          throw new Error("Could not load datasets");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setDatasets(data);
+        setError("");
+      })
+      .catch(() => setError("Cannot reach the server. Is it running?"));
+  }, [refreshKey, onAuthError]);
 const downloadPDF = async (datasetId) => {
   const token = localStorage.getItem("authToken");
 
@@ -26,7 +40,12 @@ const downloadPDF = async (datasetId) => {
         Authorization: `Token ${token}`,
       },
     }
-  );
+  ).catch(() => null);
+
+  if (!response || !response.ok) {
+    setError("Could not download the PDF report");
+    return;
+  }
 
   const blob = await response.blob();
   const url = window.URL.createObjectURL(blob);
@@ -42,6 +61,7 @@ const downloadPDF = async (datasetId) => {
   return (
     <div>
       <h2>Last 5 Uploaded Datasets</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
 
       {datasets.map((dataset) => (
         <div

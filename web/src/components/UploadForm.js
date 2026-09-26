@@ -26,12 +26,14 @@ function UploadForm({ onUploadSuccess }) {
     });
 
       if (!response.ok) {
-        throw new Error("Upload failed");
+        const data = await response.json().catch(() => ({}));
+        setMessage(data.error || "Upload failed");
+        return;
       }
-        setMessage("Upload successful");
-        onUploadSuccess();
+      setMessage("Upload successful");
+      onUploadSuccess();
     } catch (error) {
-      setMessage("Error uploading file");
+      setMessage("Cannot reach the server. Is it running?");
     }
   };
 

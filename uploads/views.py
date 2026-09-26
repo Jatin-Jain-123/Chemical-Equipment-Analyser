@@ -56,6 +56,31 @@ class CSVUploadAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        if df.empty:
+            return Response(
+                {"error": "CSV has no data rows"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Numbers must be numbers: a text value would crash the averages,
+        # and a column with no values at all has no average to report.
+        for column in ["Flowrate", "Pressure", "Temperature"]:
+            raw = df[column]
+            values = pd.to_numeric(raw, errors="coerce")
+            bad = raw[values.isna() & raw.notna()]
+            if not bad.empty:
+                return Response(
+                    {"error": f"{column} must be a number; found {bad.iloc[0]!r} "
+                              f"in row {bad.index[0] + 2}"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            if values.isna().all():
+                return Response(
+                    {"error": f"{column} has no values"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            df[column] = values
+
         # Analytics
         summary = {
             "total_equipment": len(df),
